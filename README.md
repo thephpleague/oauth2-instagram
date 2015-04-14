@@ -4,7 +4,6 @@
 [![Build Status](https://img.shields.io/travis/thephpleague/oauth2-instagram/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-instagram)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-instagram.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-instagram/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-instagram.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-instagram)
-
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-instagram.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-instagram)
 
 This package provides Instagram OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
