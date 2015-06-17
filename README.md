@@ -70,6 +70,28 @@ if (!isset($_GET['code'])) {
 }
 ```
 
+### Managing Scopes
+
+When creating your Instagram provider, you can specify the scopes your application may authorize.
+
+```php
+$provider = new League\OAuth2\Client\Provider\Instagram([
+    'clientId'          => '{linkedin-client-id}',
+    'clientSecret'      => '{linkedin-client-secret}',
+    'redirectUri'       => 'https://example.com/callback-url',
+    'scopes'            => ['basic likes comments'],
+]);
+```
+
+It is important to note, each scope must be space delimited and contained within one string.
+
+At the time of authoring this documentation, the [following scopes are available](https://instagram.com/developer/authentication/#scope).
+
+- basic
+- comments
+- relationships
+- likes
+
 ## Testing
 
 ``` bash
