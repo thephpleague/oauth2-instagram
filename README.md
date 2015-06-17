@@ -79,11 +79,9 @@ $provider = new League\OAuth2\Client\Provider\Instagram([
     'clientId'          => '{instagram-client-id}',
     'clientSecret'      => '{instagram-client-secret}',
     'redirectUri'       => 'https://example.com/callback-url',
-    'scopes'            => ['basic likes comments'],
+    'scopes'            => ['basic','likes','comments'],
 ]);
 ```
-
-It is important to note, each scope must be space delimited and contained within one string.
 
 At the time of authoring this documentation, the [following scopes are available](https://instagram.com/developer/authentication/#scope).
 

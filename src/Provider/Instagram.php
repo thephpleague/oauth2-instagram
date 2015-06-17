@@ -7,6 +7,7 @@ use League\OAuth2\Client\Entity\User;
 class Instagram extends AbstractProvider
 {
     public $scopes = ['basic'];
+    public $scopeSeparator = ' ';
     public $responseType = 'json';
 
     public function urlAuthorize()

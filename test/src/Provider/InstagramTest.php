@@ -69,7 +69,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(['basic'], $this->provider->getScopes());
 
-        $this->provider->setScopes(['basic likes comments']);
+        $this->provider->setScopes(['basic','likes','comments']);
         $authUrl = $this->provider->getAuthorizationUrl();
 
         $this->assertContains('scope=basic+likes+comments', $authUrl);
