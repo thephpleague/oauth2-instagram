@@ -58,8 +58,6 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
 
         $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
 
-#    print_r($token);die();
-
         $this->assertEquals('mock_access_token', $token->accessToken);
         $this->assertLessThanOrEqual(time() + 3600, $token->expires);
         $this->assertGreaterThanOrEqual(time(), $token->expires);
@@ -70,6 +68,11 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
     public function testScopes()
     {
         $this->assertEquals(['basic'], $this->provider->getScopes());
+
+        $this->provider->setScopes(['basic likes comments']);
+        $authUrl = $this->provider->getAuthorizationUrl();
+
+        $this->assertContains('scope=basic+likes+comments', $authUrl);
     }
 
     public function testUserData()
