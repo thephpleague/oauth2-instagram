@@ -33,7 +33,7 @@ if (!isset($_GET['code'])) {
 
     // If we don't have an authorization code then get one
     $authUrl = $provider->getAuthorizationUrl();
-    $_SESSION['oauth2state'] = $provider->state;
+    $_SESSION['oauth2state'] = $provider->getState();
     header('Location: '.$authUrl);
     exit;
 
@@ -54,10 +54,10 @@ if (!isset($_GET['code'])) {
     try {
 
         // We got an access token, let's now get the user's details
-        $userDetails = $provider->getUserDetails($token);
+        $user = $provider->getUser($token);
 
         // Use these details to create a new profile
-        printf('Hello %s!', $userDetails->firstName);
+        printf('Hello %s!', $user->getName());
 
     } catch (Exception $e) {
 
@@ -66,22 +66,23 @@ if (!isset($_GET['code'])) {
     }
 
     // Use this to interact with an API on the users behalf
-    echo $token->accessToken;
+    echo $token->getToken();
 }
 ```
 
 ### Managing Scopes
 
-When creating your Instagram provider, you can specify the scopes your application may authorize.
+When creating your Instagram authorization URL, you can specify the state and scopes your application may authorize.
 
 ```php
-$provider = new League\OAuth2\Client\Provider\Instagram([
-    'clientId'          => '{instagram-client-id}',
-    'clientSecret'      => '{instagram-client-secret}',
-    'redirectUri'       => 'https://example.com/callback-url',
-    'scopes'            => ['basic','likes','comments'],
-]);
+$options = [
+    'state' => 'OPTIONAL_CUSTOM_CONFIGURED_STATE',
+    'scope' => ['basic','likes','comments'] // array or string
+];
+
+$authorizationUrl = $provider->getAuthorizationUrl($options);
 ```
+If neither are defined, the provider will utilize internal defaults.
 
 At the time of authoring this documentation, the [following scopes are available](https://instagram.com/developer/authentication/#scope).
 

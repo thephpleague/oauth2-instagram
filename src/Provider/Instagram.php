@@ -2,58 +2,107 @@
 
 namespace League\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Entity\User;
+use League\OAuth2\Client\Token\AccessToken;
+use Psr\Http\Message\ResponseInterface;
 
 class Instagram extends AbstractProvider
 {
-    public $scopes = ['basic'];
-    public $scopeSeparator = ' ';
-    public $responseType = 'json';
+    /**
+     * Default scopes
+     *
+     * @var array
+     */
+    public $defaultScopes = ['basic'];
 
-    public function urlAuthorize()
+    /**
+     * Get the string used to separate scopes.
+     *
+     * @return string
+     */
+    protected function getScopeSeparator()
+    {
+        return ' ';
+    }
+
+    /**
+     * Get authorization url to begin OAuth flow
+     *
+     * @return string
+     */
+    public function getBaseAuthorizationUrl()
     {
         return 'https://api.instagram.com/oauth/authorize';
     }
 
-    public function urlAccessToken()
+    /**
+     * Get access token url to retrieve token
+     *
+     * @param  array $params
+     *
+     * @return string
+     */
+    public function getBaseAccessTokenUrl(array $params)
     {
         return 'https://api.instagram.com/oauth/access_token';
     }
 
-    public function urlUserDetails(\League\OAuth2\Client\Token\AccessToken $token)
+    /**
+     * Get provider url to fetch user details
+     *
+     * @param  AccessToken $token
+     *
+     * @return string
+     */
+    public function getUserDetailsUrl(AccessToken $token)
     {
         return 'https://api.instagram.com/v1/users/self?access_token='.$token;
     }
 
-    public function userDetails($response, \League\OAuth2\Client\Token\AccessToken $token)
+    /**
+     * Get the default scopes used by this provider.
+     *
+     * This should not be a complete list of all scopes, but the minimum
+     * required for the provider user interface!
+     *
+     * @return array
+     */
+    protected function getDefaultScopes()
     {
-        $user = new User();
+        return $this->defaultScopes;
+    }
 
-        $description = (isset($response->data->bio)) ? $response->data->bio : null;
+    /**
+     * Check a provider response for errors.
+     *
+     * @throws IdentityProviderException
+     * @param  ResponseInterface $response
+     * @param  string $data Parsed response data
+     * @return void
+     */
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
 
-        $user->exchangeArray([
-            'uid' => $response->data->id,
-            'nickname' => $response->data->username,
-            'name' => $response->data->full_name,
+    }
+
+    /**
+     * Generate a user object from a successful user details request.
+     *
+     * @param array $response
+     * @param AccessToken $token
+     * @return League\OAuth2\Client\Provider\UserInterface
+     */
+    protected function createUser(array $response, AccessToken $token)
+    {
+        $description = (isset($response['data']['bio'])) ? $response['data']['bio'] : null;
+
+        $attributes = [
+            'userId' => $response['data']['id'],
+            'nickname' => $response['data']['username'],
+            'name' => $response['data']['full_name'],
             'description' => $description,
-            'imageUrl' => $response->data->profile_picture,
-        ]);
+            'imageurl' => $response['data']['profile_picture'],
+        ];
 
-        return $user;
-    }
-
-    public function userUid($response, \League\OAuth2\Client\Token\AccessToken $token)
-    {
-        return $response->data->id;
-    }
-
-    public function userEmail($response, \League\OAuth2\Client\Token\AccessToken $token)
-    {
-        return;
-    }
-
-    public function userScreenName($response, \League\OAuth2\Client\Token\AccessToken $token)
-    {
-        return $response->data->full_name;
+        return new User($attributes);
     }
 }
