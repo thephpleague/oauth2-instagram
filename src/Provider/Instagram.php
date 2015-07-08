@@ -93,16 +93,6 @@ class Instagram extends AbstractProvider
      */
     protected function createUser(array $response, AccessToken $token)
     {
-        $description = (isset($response['data']['bio'])) ? $response['data']['bio'] : null;
-
-        $attributes = [
-            'userId' => $response['data']['id'],
-            'nickname' => $response['data']['username'],
-            'name' => $response['data']['full_name'],
-            'description' => $description,
-            'imageurl' => $response['data']['profile_picture'],
-        ];
-
-        return new User($attributes);
+        return new User($response, $response['data']['id']);
     }
 }
