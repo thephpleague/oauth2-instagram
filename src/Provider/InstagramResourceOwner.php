@@ -2,9 +2,9 @@
 
 /**
  * @property array $response
- * @property string $uid
+ * @property string $resourceOwnerId
  */
-class User extends StandardUser
+class InstagramResourceOwner extends GenericResourceOwner
 {
     /**
      * Get user imageurl
@@ -41,9 +41,9 @@ class User extends StandardUser
      *
      * @return string
      */
-    public function getUserId()
+    public function getId()
     {
-        return $this->uid;
+        return $this->resourceOwnerId;
     }
 
     /**
