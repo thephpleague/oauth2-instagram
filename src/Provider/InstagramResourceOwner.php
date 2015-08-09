@@ -1,15 +1,38 @@
 <?php namespace League\OAuth2\Client\Provider;
 
-/**
- * @property array $response
- * @property string $resourceOwnerId
- */
-class InstagramResourceOwner extends GenericResourceOwner
+class InstagramResourceOwner implements ResourceOwnerInterface
 {
+    /**
+     * Raw response
+     *
+     * @var array
+     */
+    protected $response;
+
+    /**
+     * Creates new resource owner.
+     *
+     * @param array  $response
+     */
+    public function __construct(array $response = array())
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * Get resource owner id
+     *
+     * @return string|null
+     */
+    public function getId()
+    {
+        return $this->response['data']['id'] ?: null;
+    }
+
     /**
      * Get user imageurl
      *
-     * @return string
+     * @return string|null
      */
     public function getImageurl()
     {
@@ -19,7 +42,7 @@ class InstagramResourceOwner extends GenericResourceOwner
     /**
      * Get user name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -29,7 +52,7 @@ class InstagramResourceOwner extends GenericResourceOwner
     /**
      * Get user nickname
      *
-     * @return string
+     * @return string|null
      */
     public function getNickname()
     {
@@ -37,22 +60,22 @@ class InstagramResourceOwner extends GenericResourceOwner
     }
 
     /**
-     * Get user userId
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->resourceOwnerId;
-    }
-
-    /**
      * Get user description
      *
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
         return $this->response['data']['bio'] ?: null;
+    }
+
+    /**
+     * Return all of the owner details available as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 }

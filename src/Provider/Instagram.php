@@ -93,6 +93,6 @@ class Instagram extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new InstagramResourceOwner($response, $response['data']['id']);
+        return new InstagramResourceOwner($response);
     }
 }
