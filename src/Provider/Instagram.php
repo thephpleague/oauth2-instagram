@@ -8,6 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 class Instagram extends AbstractProvider
 {
     /**
+     * @var string Key used in a token response to identify the resource owner.
+     */
+    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'user.id';
+
+    /**
      * Default scopes
      *
      * @var array

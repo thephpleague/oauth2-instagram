@@ -67,7 +67,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
     public function testGetAccessToken()
     {
         $response = m::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_access_token","user": {"id": "1","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
+        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_access_token","user": {"id": "123","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
         $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -79,7 +79,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('mock_access_token', $token->getToken());
         $this->assertNull($token->getExpires());
         $this->assertNull($token->getRefreshToken());
-        $this->assertNull($token->getResourceOwnerId());
+        $this->assertEquals('123', $token->getResourceOwnerId());
     }
 
     public function testUserData()
