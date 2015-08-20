@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Client\Provider;
 
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -79,6 +80,7 @@ class Instagram extends AbstractProvider
     /**
      * Check a provider response for errors.
      *
+     * @link   https://instagram.com/developer/endpoints/
      * @throws IdentityProviderException
      * @param  ResponseInterface $response
      * @param  string $data Parsed response data
@@ -86,7 +88,13 @@ class Instagram extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-
+        if (isset($data['meta']['error_type'])) {
+            throw new IdentityProviderException(
+                $data['meta']['error_message'] ?: $response->getReasonPhrase(),
+                $data['meta']['code'] ?: $response->getStatusCode(),
+                $response
+            );
+        }
     }
 
     /**
