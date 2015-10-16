@@ -76,6 +76,6 @@ class InstagramResourceOwner implements ResourceOwnerInterface
      */
     public function toArray()
     {
-        return $this->response;
+        return $this->response['data'];
     }
 }
