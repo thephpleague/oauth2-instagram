@@ -64,6 +64,26 @@ class Instagram extends AbstractProvider
         return 'https://api.instagram.com/v1/users/self?access_token='.$token;
     }
 
+    public function getAuthenticatedRequest($method, $url, $token, array $options = [])
+    {
+        $parsedUrl = \parse_url($url);
+        $queryString = array();
+
+        if (isset($parsedUrl['query'])) {
+            parse_str($parsedUrl['query'], $queryString);
+        }
+
+        if (!isset($queryString['access_token'])) {
+            $queryString['access_token'] = (string) $token;
+        }
+
+        $url = \http_build_url($url, [
+            'query' => \http_build_query($queryString),
+        ]);
+
+        return $this->createRequest($method, $url, null, $options);
+    }
+
     /**
      * Get the default scopes used by this provider.
      *
