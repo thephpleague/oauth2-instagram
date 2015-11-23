@@ -138,4 +138,28 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         $this->provider->setHttpClient($client);
         $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
     }
+
+    public function testGetAuthenticatedRequest()
+    {
+        $method = 'GET';
+        $url = 'https://api.instagram.com/v1/users/self/feed';
+
+        $accessTokenResponse = m::mock('Psr\Http\Message\ResponseInterface');
+        $accessTokenResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","user": {"id": "1574083","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
+        $accessTokenResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+
+        $client = m::mock('GuzzleHttp\ClientInterface');
+        $client->shouldReceive('send')
+            ->times(1)
+            ->andReturn($accessTokenResponse);
+        $this->provider->setHttpClient($client);
+
+        $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
+
+        $authenticatedRequest = $this->provider->getAuthenticatedRequest($method, $url, $token);
+
+        $this->assertInstanceOf('Psr\Http\Message\RequestInterface', $authenticatedRequest);
+        $this->assertEquals($method, $authenticatedRequest->getMethod());
+        $this->assertContains('access_token=mock_access_token', $authenticatedRequest->getUri()->getQuery());
+    }
 }
