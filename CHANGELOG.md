@@ -1,6 +1,24 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
+## 0.2.1 - 2015-11-23
+
+### Added
+- A properly functioning `getAuthenticatedRequest()` for Instagram.com
+- Modification for data returned by InstagramResourceOwner::toArray
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.2.0 - 2015-08-20
 
 ### Added
