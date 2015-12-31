@@ -108,10 +108,20 @@ class Instagram extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-        if (isset($data['meta']['error_type'])) {
+        // standard error response format
+        if (!empty($data['meta']['error_type'])) {
             throw new IdentityProviderException(
                 $data['meta']['error_message'] ?: $response->getReasonPhrase(),
                 $data['meta']['code'] ?: $response->getStatusCode(),
+                $response
+            );
+        }
+
+        // OAuthException error response format
+        if (!empty($data['error_type'])) {
+            throw new IdentityProviderException(
+                $data['error_message'] ?: $response->getReasonPhrase(),
+                $data['code'] ?: $response->getStatusCode(),
                 $response
             );
         }
@@ -122,7 +132,7 @@ class Instagram extends AbstractProvider
      *
      * @param array $response
      * @param AccessToken $token
-     * @return League\OAuth2\Client\Provider\ResourceOwnerInterface
+     * @return \League\OAuth2\Client\Provider\ResourceOwnerInterface
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
