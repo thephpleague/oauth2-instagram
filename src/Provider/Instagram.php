@@ -64,6 +64,16 @@ class Instagram extends AbstractProvider
         return 'https://api.instagram.com/v1/users/self?access_token='.$token;
     }
 
+    /**
+     * Returns an authenticated PSR-7 request instance.
+     *
+     * @param  string $method
+     * @param  string $url
+     * @param  AccessToken|string $token
+     * @param  array $options Any of "headers", "body", and "protocolVersion".
+     *
+     * @return \Psr\Http\Message\RequestInterface
+     */
     public function getAuthenticatedRequest($method, $url, $token, array $options = [])
     {
         $parsedUrl = \parse_url($url);
@@ -108,7 +118,7 @@ class Instagram extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-        // standard error response format
+        // Standard error response format
         if (!empty($data['meta']['error_type'])) {
             throw new IdentityProviderException(
                 $data['meta']['error_message'] ?: $response->getReasonPhrase(),
@@ -132,7 +142,7 @@ class Instagram extends AbstractProvider
      *
      * @param array $response
      * @param AccessToken $token
-     * @return \League\OAuth2\Client\Provider\ResourceOwnerInterface
+     * @return ResourceOwnerInterface
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
