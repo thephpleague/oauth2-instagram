@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
+## 0.2.2 - 2016-04-13
+
+### Added
+- Refactored exception handling
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.2.1 - 2015-11-23
 
 ### Added

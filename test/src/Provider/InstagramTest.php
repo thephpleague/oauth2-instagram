@@ -129,6 +129,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
         $postResponse->shouldReceive('getBody')->andReturn('{"meta": {"error_type": "OAuthException","code": '.$status.',"error_message": "'.$message.'"}}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+        $postResponse->shouldReceive('getReasonPhrase');
         $postResponse->shouldReceive('getStatusCode')->andReturn($status);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -149,6 +150,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
         $postResponse->shouldReceive('getBody')->andReturn('{"error_type": "OAuthException","code": '.$status.',"error_message": "'.$message.'"}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+        $postResponse->shouldReceive('getReasonPhrase');
         $postResponse->shouldReceive('getStatusCode')->andReturn($status);
 
         $client = m::mock('GuzzleHttp\ClientInterface');

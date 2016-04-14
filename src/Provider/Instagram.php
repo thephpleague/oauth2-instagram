@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -76,7 +76,7 @@ class Instagram extends AbstractProvider
      */
     public function getAuthenticatedRequest($method, $url, $token, array $options = [])
     {
-        $parsedUrl = \parse_url($url);
+        $parsedUrl = parse_url($url);
         $queryString = array();
 
         if (isset($parsedUrl['query'])) {
@@ -87,8 +87,8 @@ class Instagram extends AbstractProvider
             $queryString['access_token'] = (string) $token;
         }
 
-        $url = \http_build_url($url, [
-            'query' => \http_build_query($queryString),
+        $url = http_build_url($url, [
+            'query' => http_build_query($queryString),
         ]);
 
         return $this->createRequest($method, $url, null, $options);
@@ -120,20 +120,12 @@ class Instagram extends AbstractProvider
     {
         // Standard error response format
         if (!empty($data['meta']['error_type'])) {
-            throw new IdentityProviderException(
-                $data['meta']['error_message'] ?: $response->getReasonPhrase(),
-                $data['meta']['code'] ?: $response->getStatusCode(),
-                $response
-            );
+            throw InstagramIdentityProviderException::clientException($response, $data);
         }
 
         // OAuthException error response format
         if (!empty($data['error_type'])) {
-            throw new IdentityProviderException(
-                $data['error_message'] ?: $response->getReasonPhrase(),
-                $data['code'] ?: $response->getStatusCode(),
-                $response
-            );
+            throw InstagramIdentityProviderException::oauthException($response, $data);
         }
     }
 
