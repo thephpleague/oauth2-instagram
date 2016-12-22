@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
+## 0.2.3 - 2016-12-22
+
+### Added
+- Custom host configuration
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.2.2 - 2016-04-13
 
 ### Added

@@ -27,6 +27,7 @@ $provider = new League\OAuth2\Client\Provider\Instagram([
     'clientId'          => '{instagram-client-id}',
     'clientSecret'      => '{instagram-client-secret}',
     'redirectUri'       => 'https://example.com/callback-url',
+    'host'              => 'https://api.instagram.com' // Optional, defaults to https://api.instagram.com
 ]);
 
 if (!isset($_GET['code'])) {

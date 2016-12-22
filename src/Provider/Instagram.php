@@ -21,6 +21,23 @@ class Instagram extends AbstractProvider
     public $defaultScopes = ['basic'];
 
     /**
+     * Default host
+     *
+     * @var string
+     */
+    protected $host = 'https://api.instagram.com';
+
+    /**
+     * Gets host.
+     *
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
      * Get the string used to separate scopes.
      *
      * @return string
@@ -37,7 +54,7 @@ class Instagram extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        return 'https://api.instagram.com/oauth/authorize';
+        return $this->host.'/oauth/authorize';
     }
 
     /**
@@ -49,7 +66,7 @@ class Instagram extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        return 'https://api.instagram.com/oauth/access_token';
+        return $this->host.'/oauth/access_token';
     }
 
     /**
@@ -61,7 +78,7 @@ class Instagram extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return 'https://api.instagram.com/v1/users/self?access_token='.$token;
+        return $this->host.'/v1/users/self?access_token='.$token;
     }
 
     /**
@@ -139,5 +156,19 @@ class Instagram extends AbstractProvider
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new InstagramResourceOwner($response);
+    }
+
+    /**
+     * Sets host.
+     *
+     * @param string $host
+     *
+     * @return string
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+
+        return $this;
     }
 }

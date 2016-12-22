@@ -36,6 +36,28 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($this->provider->getState());
     }
 
+    public function testSetHostInConfig()
+    {
+        $host = uniqid();
+
+        $provider = new \League\OAuth2\Client\Provider\Instagram([
+            'clientId' => 'mock_client_id',
+            'clientSecret' => 'mock_secret',
+            'redirectUri' => 'none',
+            'host' => $host
+        ]);
+
+        $this->assertEquals($host, $provider->getHost());
+    }
+
+    public function testSetHostAfterConfig()
+    {
+        $host = uniqid();
+
+        $this->provider->setHost($host);
+
+        $this->assertEquals($host, $this->provider->getHost());
+    }
 
     public function testScopes()
     {
