@@ -18,8 +18,7 @@
         "instagram"
     ],
     "require": {
-        "php": ">=5.5.0",
-        "league/oauth2-client": "~1.0",
+        "league/oauth2-client": "^2.0",
         "jakeasmith/http_build_url": "^1.0"
     },
     "require-dev": {
