@@ -1,9 +1,12 @@
 <?php namespace League\OAuth2\Client\Test\Provider;
 
+use League\OAuth2\Client\Tool\QueryBuilderTrait;
 use Mockery as m;
 
 class InstagramTest extends \PHPUnit_Framework_TestCase
 {
+    use QueryBuilderTrait;
+
     protected $provider;
 
     protected function setUp()
@@ -61,11 +64,12 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
 
     public function testScopes()
     {
-        $options = ['scope' => [uniqid(),uniqid()]];
-
+        $scopeSeparator = ' ';
+        $options = ['scope' => [uniqid(), uniqid()]];
+        $query = ['scope' => implode($scopeSeparator, $options['scope'])];
         $url = $this->provider->getAuthorizationUrl($options);
-
-        $this->assertContains(urlencode(implode(' ', $options['scope'])), $url);
+        $encodedScope = $this->buildQueryString($query);
+        $this->assertContains($encodedScope, $url);
     }
 
     public function testGetAuthorizationUrl()
