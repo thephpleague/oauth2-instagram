@@ -56,6 +56,29 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($host, $this->provider->getHost());
     }
 
+    public function testSetGraphHostInConfig()
+    {
+        $host = uniqid();
+
+        $provider = new \League\OAuth2\Client\Provider\Instagram([
+            'clientId' => 'mock_client_id',
+            'clientSecret' => 'mock_secret',
+            'redirectUri' => 'none',
+            'graphHost' => $host
+        ]);
+
+        $this->assertEquals($host, $provider->getGraphHost());
+    }
+
+    public function testSetGraphHostAfterConfig()
+    {
+        $host = uniqid();
+
+        $this->provider->setGraphHost($host);
+
+        $this->assertEquals($host, $this->provider->getGraphHost());
+    }
+
     public function testScopes()
     {
         $scopeSeparator = ' ';
@@ -87,7 +110,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
     public function testGetAccessToken()
     {
         $response = m::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_access_token","user": {"id": "123","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
+        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_access_token","user_id": "123"}');
         $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -105,17 +128,14 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
     public function testUserData()
     {
         $userId = rand(1000,9999);
-        $name = uniqid();
         $nickname = uniqid();
-        $picture = uniqid();
-        $description = uniqid();
 
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","user": {"id": "1574083","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
+        $postResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","user_id": "1574083"}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')->andReturn('{"data": {"id": "'.$userId.'", "username": "'.$nickname.'", "full_name": "'.$name.'", "bio": "'.$description.'", "profile_picture": "'.$picture.'"}}');
+        $userResponse->shouldReceive('getBody')->andReturn('{"id": "'.$userId.'", "username": "'.$nickname.'"}');
         $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -129,14 +149,8 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($userId, $user->getId());
         $this->assertEquals($userId, $user->toArray()['id']);
-        $this->assertEquals($name, $user->getName());
-        $this->assertEquals($name, $user->toArray()['full_name']);
         $this->assertEquals($nickname, $user->getNickname());
         $this->assertEquals($nickname, $user->toArray()['username']);
-        $this->assertEquals($picture, $user->getImageurl());
-        $this->assertEquals($picture, $user->toArray()['profile_picture']);
-        $this->assertEquals($description, $user->getDescription());
-        $this->assertEquals($description, $user->toArray()['bio']);
     }
 
     public function testExceptionThrownWhenErrorObjectReceived()
@@ -144,8 +158,9 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $this->expectException('League\OAuth2\Client\Provider\Exception\IdentityProviderException');
         $message = uniqid();
         $status = rand(400,600);
+        $traceId = uniqid();
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')->andReturn('{"meta": {"error_type": "OAuthException","code": '.$status.',"error_message": "'.$message.'"}}');
+        $postResponse->shouldReceive('getBody')->andReturn('{"error": {"type": "IGApiException","code": '.$status.',"message": "'.$message.'","fbtrace_id":"'.$traceId.'"}}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
         $postResponse->shouldReceive('getReasonPhrase');
         $postResponse->shouldReceive('getStatusCode')->andReturn($status);
@@ -180,10 +195,10 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
     public function testGetAuthenticatedRequest()
     {
         $method = 'GET';
-        $url = 'https://api.instagram.com/v1/users/self/feed';
+        $url = 'https://graph.instagram.com/me';
 
         $accessTokenResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $accessTokenResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","user": {"id": "1574083","username": "snoopdogg","full_name": "Snoop Dogg","profile_picture": "..."}}');
+        $accessTokenResponse->shouldReceive('getBody')->andReturn('{"access_token": "mock_access_token","user_id": "1574083"}');
         $accessTokenResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 
         $client = m::mock('GuzzleHttp\ClientInterface');
