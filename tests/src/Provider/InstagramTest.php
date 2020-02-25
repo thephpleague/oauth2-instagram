@@ -3,7 +3,7 @@
 use League\OAuth2\Client\Tool\QueryBuilderTrait;
 use Mockery as m;
 
-class InstagramTest extends \PHPUnit_Framework_TestCase
+class InstagramTest extends \PHPUnit\Framework\TestCase
 {
     use QueryBuilderTrait;
 
