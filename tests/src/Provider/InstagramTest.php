@@ -9,7 +9,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
 
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new \League\OAuth2\Client\Provider\Instagram([
             'clientId' => 'mock_client_id',
@@ -18,7 +18,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
         parent::tearDown();
@@ -69,7 +69,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $query = ['scope' => implode($scopeSeparator, $options['scope'])];
         $url = $this->provider->getAuthorizationUrl($options);
         $encodedScope = $this->buildQueryString($query);
-        $this->assertContains($encodedScope, $url);
+        $this->assertStringContainsString($encodedScope, $url);
     }
 
     public function testGetAuthorizationUrl()
@@ -145,11 +145,9 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($description, $user->toArray()['bio']);
     }
 
-    /**
-     * @expectedException League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     **/
     public function testExceptionThrownWhenErrorObjectReceived()
     {
+        $this->expectException('League\OAuth2\Client\Provider\Exception\IdentityProviderException');
         $message = uniqid();
         $status = rand(400,600);
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
@@ -166,11 +164,9 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
     }
 
-    /**
-     * @expectedException League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     **/
     public function testExceptionThrownWhenAuthErrorObjectReceived()
     {
+        $this->expectException('League\OAuth2\Client\Provider\Exception\IdentityProviderException');
         $message = uniqid();
         $status = rand(400,600);
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
@@ -208,6 +204,6 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf('Psr\Http\Message\RequestInterface', $authenticatedRequest);
         $this->assertEquals($method, $authenticatedRequest->getMethod());
-        $this->assertContains('access_token=mock_access_token', $authenticatedRequest->getUri()->getQuery());
+        $this->assertStringContainsString('access_token=mock_access_token', $authenticatedRequest->getUri()->getQuery());
     }
 }
