@@ -11,14 +11,14 @@ class Instagram extends AbstractProvider
     /**
      * @var string Key used in a token response to identify the resource owner.
      */
-    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'user.id';
+    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'user_id';
 
     /**
      * Default scopes
      *
      * @var array
      */
-    public $defaultScopes = ['basic'];
+    public $defaultScopes = ['user_profile'];
 
     /**
      * Default host
@@ -28,6 +28,13 @@ class Instagram extends AbstractProvider
     protected $host = 'https://api.instagram.com';
 
     /**
+     * Default Graph API host
+     *
+     * @var string
+     */
+    protected $graphHost = 'https://graph.instagram.com';
+
+    /**
      * Gets host.
      *
      * @return string
@@ -35,6 +42,16 @@ class Instagram extends AbstractProvider
     public function getHost()
     {
         return $this->host;
+    }
+
+    /**
+     * Gets Graph API host.
+     *
+     * @return string
+     */
+    public function getGraphHost()
+    {
+        return $this->graphHost;
     }
 
     /**
@@ -78,7 +95,7 @@ class Instagram extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->host.'/v1/users/self?access_token='.$token;
+        return $this->graphHost.'/me?fields=id,username&access_token='.$token;
     }
 
     /**
@@ -127,7 +144,6 @@ class Instagram extends AbstractProvider
     /**
      * Check a provider response for errors.
      *
-     * @link   https://instagram.com/developer/endpoints/
      * @throws IdentityProviderException
      * @param  ResponseInterface $response
      * @param  string $data Parsed response data
@@ -136,7 +152,7 @@ class Instagram extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         // Standard error response format
-        if (!empty($data['meta']['error_type'])) {
+        if (!empty($data['error'])) {
             throw InstagramIdentityProviderException::clientException($response, $data);
         }
 
@@ -168,6 +184,20 @@ class Instagram extends AbstractProvider
     public function setHost($host)
     {
         $this->host = $host;
+
+        return $this;
+    }
+
+    /**
+     * Sets Graph API host.
+     *
+     * @param string $host
+     *
+     * @return string
+     */
+    public function setGraphHost($host)
+    {
+        $this->graphHost = $host;
 
         return $this;
     }
