@@ -20,11 +20,11 @@ class InstagramIdentityProviderException extends IdentityProviderException
         $code = $response->getStatusCode();
         $body = (string) $response->getBody();
 
-        if (isset($data['meta'], $data['meta']['error_message'])) {
-            $message = $data['meta']['error_message'];
+        if (isset($data['error'], $data['error']['message'])) {
+            $message = $data['error']['message'];
         }
-        if (isset($data['meta'], $data['meta']['code'])) {
-            $code = $data['meta']['code'];
+        if (isset($data['error'], $data['error']['code'])) {
+            $code = $data['error']['code'];
         }
 
         return new static($message, $code, $body);
