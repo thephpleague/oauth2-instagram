@@ -18,11 +18,6 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function tearDown(): void
-    {
-        m::close();
-    }
-
     public function testAuthorizationUrl()
     {
         $url = $this->provider->getAuthorizationUrl();
