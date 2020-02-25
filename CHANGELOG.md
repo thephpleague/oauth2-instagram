@@ -1,6 +1,30 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
+## 3.0.0 - 2020-02-25
+
+### Added
+- Support for Instagram Basic Display API
+  - get Resource Owner Details from https://graph.instagram.com/me
+  - changed default scopes to `['user_profile']`
+- Custom host configuration for Graph API host
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Support for Instagram Legacy API (https://api.instagram.com/v1/...)
+- Short-hand functions for now removed attributes
+  - `InstagramResourceOwner::getImageUrl()`
+  - `InstagramResourceOwner::getName()`
+  - `InstagramResourceOwner::getDescription()`
+
+### Security
+- Nothing
+
 ## 2.0.0 - 2017-01-25
 
 ### Added

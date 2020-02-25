@@ -27,7 +27,8 @@ $provider = new League\OAuth2\Client\Provider\Instagram([
     'clientId'          => '{instagram-client-id}',
     'clientSecret'      => '{instagram-client-secret}',
     'redirectUri'       => 'https://example.com/callback-url',
-    'host'              => 'https://api.instagram.com' // Optional, defaults to https://api.instagram.com
+    'host'              => 'https://api.instagram.com',  // Optional, defaults to https://api.instagram.com
+    'graphHost'         => 'https://graph.instagram.com' // Optional, defaults to https://graph.instagram.com
 ]);
 
 if (!isset($_GET['code'])) {
@@ -58,7 +59,7 @@ if (!isset($_GET['code'])) {
         $user = $provider->getResourceOwner($token);
 
         // Use these details to create a new profile
-        printf('Hello %s!', $user->getName());
+        printf('Hello %s!', $user->getNickname());
 
     } catch (Exception $e) {
 
@@ -78,19 +79,17 @@ When creating your Instagram authorization URL, you can specify the state and sc
 ```php
 $options = [
     'state' => 'OPTIONAL_CUSTOM_CONFIGURED_STATE',
-    'scope' => ['basic','likes','comments'] // array or string
+    'scope' => ['user_profile', 'user_media'] // array or string
 ];
 
 $authorizationUrl = $provider->getAuthorizationUrl($options);
 ```
 If neither are defined, the provider will utilize internal defaults.
 
-At the time of authoring this documentation, the [following scopes are available](https://instagram.com/developer/authentication/#scope).
+At the time of authoring this documentation, the [following scopes are available](https://developers.facebook.com/docs/instagram-basic-display-api/overview#permissions).
 
-- basic
-- comments
-- relationships
-- likes
+- user_profile
+- user_media
 
 ## Testing
 
