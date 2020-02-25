@@ -21,7 +21,6 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
     public function tearDown(): void
     {
         m::close();
-        parent::tearDown();
     }
 
     public function testAuthorizationUrl()
