@@ -72,6 +72,27 @@ if (!isset($_GET['code'])) {
 }
 ```
 
+### Requesting a long-lived access-token
+```php
+$token = $provider->getAccessToken('authorization_code', [
+    'code' => $_GET['code']
+]);
+    
+$longLivedToken = $provider->getLongLivedAccessToken($token);
+```
+
+### Refreshing a long-lived access-token
+```php
+$token = $provider->getAccessToken('authorization_code', [
+    'code' => $_GET['code']
+]);
+
+// you need to fetch a long-lived token first!    
+$longLivedToken = $provider->getLongLivedAccessToken($token);
+
+$refreshedToken = $provider->getRefreshedAccessToken($longLivedToken);
+```
+
 ### Managing Scopes
 
 When creating your Instagram authorization URL, you can specify the state and scopes your application may authorize.
