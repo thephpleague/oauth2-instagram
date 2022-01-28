@@ -155,7 +155,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionThrownWhenErrorObjectReceived()
     {
-        $this->expectException('League\OAuth2\Client\Provider\Exception\IdentityProviderException');
+        $this->expectException('League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException');
         $message = uniqid();
         $status = rand(400,600);
         $traceId = uniqid();
@@ -175,7 +175,7 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionThrownWhenAuthErrorObjectReceived()
     {
-        $this->expectException('League\OAuth2\Client\Provider\Exception\IdentityProviderException');
+        $this->expectException('League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException');
         $message = uniqid();
         $status = rand(400,600);
         $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
@@ -214,5 +214,57 @@ class InstagramTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('Psr\Http\Message\RequestInterface', $authenticatedRequest);
         $this->assertEquals($method, $authenticatedRequest->getMethod());
         $this->assertStringContainsString('access_token=mock_access_token', $authenticatedRequest->getUri()->getQuery());
+    }
+
+    public function testGetUpdateAccessTokenUrlForRefresh()
+    {
+        $url = $this->provider->getUpdateAccessTokenUrl([], 'refresh_access_token');
+        $uri = parse_url($url);
+
+        $this->assertEquals('/refresh_access_token', $uri['path']);
+    }
+
+    public function testGetUpdateAccessTokenUrlForExchange()
+    {
+        $url = $this->provider->getUpdateAccessTokenUrl([], 'access_token');
+        $uri = parse_url($url);
+
+        $this->assertEquals('/access_token', $uri['path']);
+    }
+
+    public function testGetLongLivedAccessToken()
+    {
+        $response = m::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_long_lived_access_token","user_id": "123"}');
+        $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+
+        $client = m::mock('GuzzleHttp\ClientInterface');
+        $client->shouldReceive('send')->times(1)->andReturn($response);
+        $this->provider->setHttpClient($client);
+
+        $token = $this->provider->getLongLivedAccessToken('authorization_code', ['code' => 'mock_access_token']);
+
+        $this->assertEquals('mock_long_lived_access_token', $token->getToken());
+        $this->assertNull($token->getExpires());
+        $this->assertNull($token->getRefreshToken());
+        $this->assertEquals('123', $token->getResourceOwnerId());
+    }
+
+    public function testGetRefreshedAccessToken()
+    {
+        $response = m::mock('Psr\Http\Message\ResponseInterface');
+        $response->shouldReceive('getBody')->andReturn('{"access_token":"mock_refreshed_long_lived_access_token","user_id": "123"}');
+        $response->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
+
+        $client = m::mock('GuzzleHttp\ClientInterface');
+        $client->shouldReceive('send')->times(1)->andReturn($response);
+        $this->provider->setHttpClient($client);
+
+        $token = $this->provider->getRefreshedAccessToken('authorization_code', ['code' => 'mock_long_lived_access_token']);
+
+        $this->assertEquals('mock_refreshed_long_lived_access_token', $token->getToken());
+        $this->assertNull($token->getExpires());
+        $this->assertNull($token->getRefreshToken());
+        $this->assertEquals('123', $token->getResourceOwnerId());
     }
 }
