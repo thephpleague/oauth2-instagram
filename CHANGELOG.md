@@ -1,13 +1,13 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
-## 3.1.0 - Unreleased
+## 3.1.0 - 2022-02-09
 
 ### Added
 - Support for Long-Lived Access Tokens
   - Pass short-term token to `getLongLivedAccessToken`
   - Pass long-term token to `getRefreshedAccessToken` to refresh
-  
+
 ### Deprecated
 - Nothing
 
