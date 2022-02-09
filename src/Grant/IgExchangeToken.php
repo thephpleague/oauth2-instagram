@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Client\Grant;
 
-class IgExchangeToken extends AbstractGrant
+class InstagramExchangeToken extends AbstractGrant
 {
     /**
      * @inheritdoc
