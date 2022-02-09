@@ -2,14 +2,14 @@
 
 namespace League\OAuth2\Client\Grant;
 
-class InstagramRefreshToken extends AbstractGrant
+class IgExchangeToken extends AbstractGrant
 {
     /**
      * @inheritdoc
      */
     public function __toString()
     {
-        return 'ig_refresh_token';
+        return 'ig_exchange_token';
     }
 
     /**
@@ -27,6 +27,6 @@ class InstagramRefreshToken extends AbstractGrant
      */
     protected function getName()
     {
-        return 'ig_refresh_token';
+        return 'ig_exchange_token';
     }
 }
