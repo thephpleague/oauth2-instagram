@@ -1,6 +1,20 @@
 # Changelog
 All Notable changes to `oauth2-instagram` will be documented in this file
 
+## 3.1.0 - Unreleased
+
+### Added
+- Support for Long-Lived Access Tokens
+  - Pass short-term token to `getLongLivedAccessToken`
+  - Pass long-term token to `getRefreshedAccessToken` to refresh
+  
+### Deprecated
+- Nothing
+
+### Fixed
+- Fixes two annotations return types
+- Fixes wrong Exception class (`IdentityProviderException` => `InstagramIdentityProviderException`)
+
 ## 3.0.0 - 2020-02-25
 
 ### Added

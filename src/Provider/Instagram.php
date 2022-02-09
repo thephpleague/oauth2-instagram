@@ -4,6 +4,7 @@ namespace League\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Instagram extends AbstractProvider
@@ -87,6 +88,21 @@ class Instagram extends AbstractProvider
     }
 
     /**
+     * Get access token url to
+     *  - exchange short-lived token for a long-lived token
+     *  - refresh unexpired long-lived token
+     *
+     * @param array $params
+     * @param string $endPoint
+     *
+     * @return string
+     */
+    public function getUpdateAccessTokenUrl(array $params, $endPoint)
+    {
+        return $this->graphHost.'/'.$endPoint;
+    }
+
+    /**
      * Get provider url to fetch user details
      *
      * @param  AccessToken $token
@@ -144,7 +160,7 @@ class Instagram extends AbstractProvider
     /**
      * Check a provider response for errors.
      *
-     * @throws IdentityProviderException
+     * @throws InstagramIdentityProviderException
      * @param  ResponseInterface $response
      * @param  string $data Parsed response data
      * @return void
@@ -163,6 +179,87 @@ class Instagram extends AbstractProvider
     }
 
     /**
+     * Exchanges a short-lived access token with a long-lived access-token.
+     *
+     * @param string|AccessTokenInterface $accessToken
+     *
+     * @return \League\OAuth2\Client\Token\AccessToken
+     *
+     * @throws InstagramIdentityProviderException
+     */
+    public function getLongLivedAccessToken($accessToken)
+    {
+        $params = [
+            'client_secret' => $this->clientSecret
+        ];
+
+        return $this->getUpdatedAccessToken($accessToken, 'ig_exchange_token', $params);
+    }
+
+    /**
+     * Refresh a long-lived token
+     *
+     * @param string|AccessTokenInterface $accessToken
+     *
+     * @return \League\OAuth2\Client\Token\AccessToken
+     *
+     * @throws InstagramIdentityProviderException
+     */
+    public function getRefreshedAccessToken($accessToken)
+    {
+        return $this->getUpdatedAccessToken($accessToken, 'ig_refresh_token');
+    }
+
+    /**
+     * Update token based on grant type
+     *
+     * @param string|AccessTokenInterface $accessToken
+     * @param string $grant
+     * @param array $params
+     *
+     * @return \League\OAuth2\Client\Token\AccessToken
+     *
+     * @throws InstagramIdentityProviderException
+     */
+    protected function getUpdatedAccessToken($accessToken, $grant, $params = [])
+    {
+        $verifiedGrant = $this->verifyGrant($grant);
+
+        $params = array_merge([
+            'access_token' => (string) $accessToken,
+        ], $params);
+
+        $params = $verifiedGrant->prepareRequestParameters($params, []);
+
+        if ($grant === 'ig_exchange_token') {
+            $updateEndpoint = 'access_token';
+        } elseif ($grant === 'ig_refresh_token') {
+            $updateEndpoint = 'refresh_access_token';
+        } else {
+            throw new \UnexpectedValueException(
+                sprintf('Invalid grand type "%s". cannot generate update token url.', $grant)
+            );
+        }
+
+        $url = $this->getUpdateAccessTokenUrl($params, $updateEndpoint);
+        $query = $this->getAccessTokenQuery($params);
+
+        $request = $this->getRequest(self::METHOD_GET, $this->appendQuery($url, $query));
+        $response = $this->getParsedResponse($request);
+
+        if (false === is_array($response)) {
+            throw new \UnexpectedValueException(
+                'Invalid response received from Authorization Server. Expected JSON.'
+            );
+        }
+
+        $prepared = $this->prepareAccessTokenResponse($response);
+
+        return $this->createAccessToken($prepared, $verifiedGrant);
+    }
+
+
+    /**
      * Generate a user object from a successful user details request.
      *
      * @param array $response
@@ -179,7 +276,7 @@ class Instagram extends AbstractProvider
      *
      * @param string $host
      *
-     * @return string
+     * @return self
      */
     public function setHost($host)
     {
@@ -193,7 +290,7 @@ class Instagram extends AbstractProvider
      *
      * @param string $host
      *
-     * @return string
+     * @return self
      */
     public function setGraphHost($host)
     {
